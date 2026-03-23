@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIBIC 2026 — UFT Ciências Contábeis</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1923;
+    --paper: #faf7f2;
+    --teal: #1a5c6b;
+    --teal-light: #2a7a8e;
+    --amber: #d4820a;
+    --amber-light: #f0a92e;
+    --rose: #c0392b;
+    --sage: #4a7c5f;
+    --muted: #6b7280;
+    --border: #d6cfc4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .deck {
+    width: 100%; height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    animation: fadeIn .4s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    bottom: 28px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(15,25,35,.85);
+    backdrop-filter: blur(12px);
+    padding: 10px 20px;
+    border-radius: 40px;
+    border: 1px solid rgba(255,255,255,.1);
+    z-index: 100;
+  }
+  .nav button {
+    background: none; border: none; color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px; cursor: pointer; padding: 4px 10px;
+    border-radius: 6px; transition: background .2s;
+  }
+  .nav button:hover { background: rgba(255,255,255,.1); }
+  .nav .counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; color: rgba(255,255,255,.5);
+    min-width: 52px; text-align: center;
+  }
+  .progress-dots { display: flex; gap: 5px; }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    transition: background .3s, transform .3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--amber-light); transform: scale(1.4); }
+
+  /* ── SLIDE 1: TITLE ── */
+  #s1 {
+    background: var(--teal);
+    background-image:
+      radial-gradient(ellipse at 80% 10%, rgba(212,130,10,.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 5% 90%, rgba(255,255,255,.06) 0%, transparent 40%);
+  }
+  #s1 .content {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; padding: 80px 100px;
+    position: relative;
+  }
+  #s1 .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; letter-spacing: .15em;
+    color: var(--amber-light);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  #s1 h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    color: #fff;
+    max-width: 700px;
+    margin-bottom: 32px;
+  }
+  #s1 .subtitle {
+    font-size: 1.15rem; font-weight: 300;
+    color: rgba(255,255,255,.75);
+    max-width: 520px; line-height: 1.6;
+    margin-bottom: 48px;
+  }
+  #s1 .meta {
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  #s1 .meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  #s1 .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(255,255,255,.45);
+  }
+  #s1 .meta-val {
+    font-size: .95rem; font-weight: 500;
+    color: rgba(255,255,255,.9);
+  }
+  #s1 .deco {
+    position: absolute; right: 80px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 22rem; font-weight: 900;
+    color: rgba(255,255,255,.04);
+    line-height: 1; pointer-events: none;
+  }
+
+  /* ── SLIDE 2: O QUE É PIBIC ── */
+  #s2 { background: var(--paper); color: var(--ink); }
+  #s2 .top-bar {
+    background: var(--ink); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  #s2 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber); letter-spacing: .1em;
+  }
+  #s2 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s2 .body {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  #s2 .left {
+    padding: 60px; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #s2 .def {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; line-height: 1.35;
+    color: var(--teal); margin-bottom: 24px;
+  }
+  #s2 .desc {
+    font-size: 1rem; line-height: 1.7;
+    color: #374151; margin-bottom: 32px;
+  }
+  #s2 .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  #s2 .tag {
+    padding: 6px 14px;
+    border-radius: 20px; font-size: .8rem; font-weight: 500;
+    letter-spacing: .04em;
+  }
+  #s2 .tag-teal { background: rgba(26,92,107,.1); color: var(--teal); border: 1px solid rgba(26,92,107,.2); }
+  #s2 .tag-amber { background: rgba(212,130,10,.1); color: var(--amber); border: 1px solid rgba(212,130,10,.2); }
+  #s2 .tag-sage { background: rgba(74,124,95,.1); color: var(--sage); border: 1px solid rgba(74,124,95,.2); }
+  #s2 .right {
+    padding: 60px; display: flex; flex-direction: column;
+    justify-content: center; gap: 20px;
+  }
+  .modality-card {
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px;
+    transition: box-shadow .2s;
+  }
+  .modality-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+  .modality-card .mc-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 8px;
+  }
+  .modality-card h3 { font-size: 1rem; font-weight: 600; color: var(--ink); }
+  .badge {
+    padding: 3px 10px; border-radius: 10px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .05em;
+  }
+  .badge-teal { background: var(--teal); color: #fff; }
+  .badge-amber { background: var(--amber); color: #fff; }
+  .badge-muted { background: #e5e7eb; color: #374151; }
+  .modality-card p {
+    font-size: .88rem; color: var(--muted); line-height: 1.5;
+  }
+  .modality-card .value {
+    margin-top: 10px; font-family: 'DM Mono', monospace;
+    font-size: .85rem; color: var(--teal); font-weight: 500;
+  }
+
+  /* ── SLIDE 3: EDITAIS ── */
+  #s3 { background: var(--ink); }
+  #s3 .top-bar {
+    background: rgba(255,255,255,.06); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  #s3 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber-light); letter-spacing: .1em;
+  }
+  #s3 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s3 .body {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; padding: 50px 60px; align-items: start;
+  }
+  .edital-card {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; padding: 32px;
+  }
+  .edital-card .ec-num {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--amber-light); margin-bottom: 8px;
+  }
+  .edital-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; margin-bottom: 6px;
+  }
+  .edital-card .for {
+    font-size: .85rem; color: rgba(255,255,255,.5);
+    margin-bottom: 24px;
+  }
+  .info-row {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    font-size: .88rem;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .label { color: rgba(255,255,255,.45); }
+  .info-row .val { color: rgba(255,255,255,.9); font-weight: 500; }
+  .info-row .val-hot { color: var(--amber-light); font-weight: 600; }
+  .alert-box {
+    grid-column: 1 / -1;
+    background: rgba(212,130,10,.12);
+    border: 1px solid rgba(212,130,10,.3);
+    border-radius: 12px; padding: 18px 24px;
+    display: flex; gap: 14px; align-items: center;
+  }
+  .alert-box .icon { font-size: 1.4rem; }
+  .alert-box p { font-size: .9rem; line-height: 1.5; color: rgba(255,255,255,.85); }
+  .alert-box strong { color: var(--amber-light); }
+
+  /* ── SLIDE 4: CALENDAR ── */
+  #s4 { background: var(--teal); }
+  #s4 .top-bar {
+    background: rgba(0,0,0,.2); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  #s4 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber-light); letter-spacing: .1em;
+  }
+  #s4 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s4 .body {
+    flex: 1; padding: 40px 60px; overflow: hidden;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .timeline-item {
+    display: flex; gap: 24px; align-items: flex-start;
+  }
+  .tl-date {
+    font-family: 'DM Mono', monospace; font-size: .78rem;
+    color: rgba(255,255,255,.55); min-width: 130px;
+    padding-top: 4px;
+  }
+  .tl-line {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 6px;
+  }
+  .tl-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tl-vline { width: 1px; flex: 1; background: rgba(255,255,255,.15); margin-top: 4px; }
+  .tl-text {
+    flex: 1; padding-bottom: 16px;
+  }
+  .tl-text h4 { font-size: .95rem; font-weight: 600; margin-bottom: 2px; }
+  .tl-text p { font-size: .82rem; color: rgba(255,255,255,.6); line-height: 1.4; }
+  .tl-now { background: var(--amber-light); }
+  .tl-upcoming { background: rgba(255,255,255,.4); }
+  .tl-future { background: rgba(255,255,255,.2); }
+  .tl-now-label {
+    display: inline-block; padding: 1px 8px; border-radius: 8px;
+    background: var(--amber-light); color: var(--ink);
+    font-size: .65rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; margin-left: 8px; vertical-align: middle;
+  }
+
+  /* ── SLIDE 5: QUEM PODE ── */
+  #s5 { background: var(--paper); color: var(--ink); }
+  #s5 .top-bar {
+    background: var(--sage); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  #s5 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: rgba(255,255,255,.7); letter-spacing: .1em;
+  }
+  #s5 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s5 .body {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  #s5 .col { padding: 50px 60px; }
+  #s5 .col-left { border-right: 1px solid var(--border); }
+  #s5 .col-title {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  #s5 .col-left .col-title { color: var(--sage); }
+  #s5 .col-right .col-title { color: var(--rose); }
+  .req-item {
+    display: flex; gap: 14px; margin-bottom: 18px;
+    align-items: flex-start;
+  }
+  .req-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0; margin-top: 2px;
+  }
+  .req-icon-yes { background: rgba(74,124,95,.15); }
+  .req-icon-no  { background: rgba(192,57,43,.1); }
+  .req-item p { font-size: .9rem; line-height: 1.5; color: #374151; }
+  .req-item strong { color: var(--ink); }
+  .highlight-box {
+    margin-top: 24px;
+    background: rgba(74,124,95,.08);
+    border: 1px solid rgba(74,124,95,.2);
+    border-radius: 10px; padding: 16px 20px;
+    font-size: .85rem; line-height: 1.6; color: #374151;
+  }
+  .highlight-box strong { color: var(--sage); }
+
+  /* ── SLIDE 6 & 7: PROJETOS ── */
+  .project-slide { }
+  .project-slide .top-bar {
+    padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .project-slide .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: .1em;
+  }
+  .project-slide .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  .project-slide .body {
+    flex: 1; display: grid; grid-template-columns: 2fr 1.2fr;
+    gap: 0;
+  }
+  .project-slide .left {
+    padding: 48px 56px;
+    border-right: 1px solid rgba(255,255,255,.1);
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .project-slide .right {
+    padding: 48px 40px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .proj-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: rgba(255,255,255,.45);
+  }
+  .proj-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; line-height: 1.25;
+  }
+  .proj-prob {
+    background: rgba(255,255,255,.06);
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+  }
+  .proj-prob .pb-label {
+    font-size: .72rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 6px;
+    color: rgba(255,255,255,.45);
+  }
+  .proj-prob p { font-size: .88rem; line-height: 1.55; color: rgba(255,255,255,.85); }
+  .proj-obj { font-size: .92rem; line-height: 1.6; color: rgba(255,255,255,.75); }
+  .side-chip {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .side-chip .sc-label {
+    font-size: .7rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: rgba(255,255,255,.4);
+    margin-bottom: 6px;
+  }
+  .side-chip p { font-size: .85rem; line-height: 1.45; color: rgba(255,255,255,.8); }
+  .link-list { display: flex; flex-direction: column; gap: 6px; }
+  .link-item {
+    display: flex; gap: 8px; align-items: center;
+    font-size: .8rem; color: rgba(255,255,255,.65);
+  }
+  .link-item::before {
+    content: '→'; font-size: .7rem; opacity: .5;
+  }
+
+  /* proj 1 */
+  #s6 { background: #1a2b3c; }
+  #s6 .top-bar { background: rgba(0,0,0,.25); }
+  #s6 .top-bar .num { color: var(--amber-light); }
+  #s6 .proj-prob { border-color: var(--amber-light); }
+
+  /* proj 2 */
+  #s7 { background: #1c2538; }
+  #s7 .top-bar { background: rgba(0,0,0,.25); }
+  #s7 .top-bar .num { color: #7dd3fc; }
+  #s7 .proj-prob { border-color: #7dd3fc; }
+  #s7 .proj-title { color: #e0f2fe; }
+
+  /* ── SLIDE 8: GRUPO DE ESTUDOS ── */
+  #s8 { background: #0f1923; }
+  #s8 .top-bar {
+    background: rgba(255,255,255,.05); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  #s8 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: #a78bfa; letter-spacing: .1em;
+  }
+  #s8 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s8 .body {
+    flex: 1; display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 0; padding: 0;
+  }
+  #s8 .left {
+    padding: 48px 56px;
+    border-right: 1px solid rgba(255,255,255,.08);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  #s8 .lead {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem; line-height: 1.3; color: #fff;
+  }
+  #s8 .sub { font-size: .9rem; line-height: 1.65; color: rgba(255,255,255,.6); }
+  #s8 .output-list { display: flex; flex-direction: column; gap: 10px; }
+  .output-item {
+    display: flex; gap: 12px; align-items: center;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .output-item .oi-icon { font-size: 1.2rem; }
+  .output-item .oi-text { }
+  .output-item .oi-text h4 { font-size: .88rem; font-weight: 600; margin-bottom: 1px; }
+  .output-item .oi-text p { font-size: .78rem; color: rgba(255,255,255,.5); }
+  #s8 .right {
+    padding: 48px 44px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  #s8 .right h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem;
+    color: #a78bfa;
+  }
+  .meeting-card {
+    background: rgba(167,139,250,.08);
+    border: 1px solid rgba(167,139,250,.2);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .meeting-card p { font-size: .88rem; line-height: 1.6; color: rgba(255,255,255,.75); }
+  .who-list { display: flex; flex-direction: column; gap: 8px; }
+  .who-item {
+    display: flex; gap: 10px; align-items: center;
+    font-size: .85rem; color: rgba(255,255,255,.7);
+  }
+  .who-item .wi-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #a78bfa; flex-shrink: 0;
+  }
+
+  /* ── SLIDE 9: PRÓXIMOS PASSOS ── */
+  #s9 {
+    background: var(--teal);
+    background-image:
+      radial-gradient(ellipse at 15% 15%, rgba(212,130,10,.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 90%, rgba(255,255,255,.05) 0%, transparent 40%);
+  }
+  #s9 .top-bar {
+    background: rgba(0,0,0,.2); padding: 18px 60px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  #s9 .top-bar .num {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber-light); letter-spacing: .1em;
+  }
+  #s9 .top-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: #fff;
+  }
+  #s9 .body {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; padding: 50px 60px;
+  }
+  .step-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 16px; padding: 28px 30px;
+    display: flex; gap: 20px;
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; font-weight: 900;
+    color: rgba(255,255,255,.12); line-height: 1;
+    flex-shrink: 0; width: 60px;
+  }
+  .step-content h4 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+  .step-content p { font-size: .85rem; line-height: 1.55; color: rgba(255,255,255,.7); }
+  .step-content .deadline {
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace; font-size: .78rem;
+    color: var(--amber-light);
+  }
+  .cta-box {
+    grid-column: 1 / -1;
+    background: rgba(212,130,10,.15);
+    border: 1px solid rgba(212,130,10,.35);
+    border-radius: 12px; padding: 22px 28px;
+    text-align: center;
+  }
+  .cta-box p {
+    font-size: 1rem; line-height: 1.6; color: rgba(255,255,255,.88);
+  }
+  .cta-box strong { color: var(--amber-light); font-size: 1.05rem; }
+
+  /* ── SLIDE 10: PERGUNTAS ── */
+  #s10 {
+    background: var(--ink);
+    justify-content: center; align-items: center;
+    text-align: center;
+  }
+  #s10 .inner { max-width: 640px; padding: 40px; }
+  #s10 .big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 900; color: rgba(255,255,255,.06);
+    line-height: 1;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; pointer-events: none;
+  }
+  #s10 h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; margin-bottom: 20px;
+    position: relative;
+  }
+  #s10 p {
+    font-size: 1rem; line-height: 1.7;
+    color: rgba(255,255,255,.6);
+    position: relative; margin-bottom: 32px;
+  }
+  #s10 .contact {
+    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    position: relative;
+  }
+  #s10 .contact-item { }
+  #s10 .contact-item .ci-label {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: rgba(255,255,255,.35); margin-bottom: 4px;
+  }
+  #s10 .contact-item .ci-val {
+    font-size: .9rem; color: var(--amber-light);
+  }
+  #s10 .uft-badge {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    color: rgba(255,255,255,.2); letter-spacing: .08em;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+<!-- ═══════════════════════════════════════
+     SLIDE 1 — TÍTULO
+═══════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="content">
+    <div class="eyebrow">UFT · Ciências Contábeis · 2026</div>
+    <h1>PIBIC: pesquisa científica na sua graduação</h1>
+    <p class="subtitle">Uma conversa sobre oportunidades de iniciação científica, projetos de pesquisa e como construirmos isso juntos.</p>
+    <div class="meta">
+      <div class="meta-item">
+        <span class="meta-label">Disciplinas</span>
+        <span class="meta-val">Dir. Empresarial · Dir. Tributário</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Duração</span>
+        <span class="meta-val">~40 minutos</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Professor</span>
+        <span class="meta-val">Dr. André Demetrio</span>
+      </div>
+    </div>
+    <div class="deco">P</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 2 — O QUE É PIBIC
+═══════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="top-bar">
+    <span class="num">01</span>
+    <h2>O que é o PIBIC?</h2>
+  </div>
+  <div class="body">
+    <div class="left">
+      <p class="def">Um programa federal que permite ao estudante de graduação fazer pesquisa científica de verdade — com ou sem bolsa.</p>
+      <p class="desc">O PIBIC (Programa Institucional de Bolsas de Iniciação Científica) é financiado pelo CNPq e pela UFT. Você trabalha ao lado de um professor orientador por 12 meses, produzindo pesquisa com rigor acadêmico.</p>
+      <div class="tags">
+        <span class="tag tag-teal">CNPq</span>
+        <span class="tag tag-amber">UFT / PROPESQ</span>
+        <span class="tag tag-sage">12 meses</span>
+        <span class="tag tag-teal">Iniciação científica</span>
+        <span class="tag tag-amber">Currículo Lattes</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="modality-card">
+        <div class="mc-top">
+          <h3>PIBIC</h3>
+          <span class="badge badge-teal">Com bolsa</span>
+        </div>
+        <p>Bolsa financiada pelo CNPq ou pela UFT. Dedicação de 20h semanais à pesquisa.</p>
+        <div class="value">R$ 700,00 / mês</div>
+      </div>
+      <div class="modality-card">
+        <div class="mc-top">
+          <h3>PIBIC-AF</h3>
+          <span class="badge badge-amber">Ações Afirmativas</span>
+        </div>
+        <p>Modalidade especial para estudantes que ingressaram por ações afirmativas. Bolsa CNPq.</p>
+        <div class="value">R$ 700,00 / mês</div>
+      </div>
+      <div class="modality-card">
+        <div class="mc-top">
+          <h3>PIVIC</h3>
+          <span class="badge badge-muted">Voluntário</span>
+        </div>
+        <p>Sem bolsa, mas com todos os benefícios: certificação, Lattes, experiência real de pesquisa e participação no Seminário de IC.</p>
+        <div class="value">Certificação oficial</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 3 — OS DOIS EDITAIS
+═══════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="top-bar">
+    <span class="num">02</span>
+    <h2>Os editais abertos agora</h2>
+  </div>
+  <div class="body">
+    <div class="edital-card">
+      <div class="ec-num">Edital nº 13/2026</div>
+      <h3>PIBIC / PIVIC</h3>
+      <p class="for">Para todos os estudantes da UFT</p>
+      <div class="info-row">
+        <span class="label">Plataforma</span>
+        <span class="val">Canindé (sites.uft.edu.br/caninde)</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Inscrições abertas</span>
+        <span class="val-hot">23/03 → 15/04/2026</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Pontuação mínima (orientador)</span>
+        <span class="val">50 pontos no Lattes (últimos 5 anos)</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Vigência da bolsa</span>
+        <span class="val">Set 2026 → Ago 2027</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Máximo de propostas por orientador</span>
+        <span class="val">3 propostas</span>
+      </div>
+    </div>
+
+    <div class="edital-card">
+      <div class="ec-num">Edital nº 10/2026</div>
+      <h3>PIBIC-AF</h3>
+      <p class="for">Para estudantes que ingressaram por ações afirmativas</p>
+      <div class="info-row">
+        <span class="label">Plataforma</span>
+        <span class="val">Canindé (sites.uft.edu.br/caninde)</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Inscrições abertas</span>
+        <span class="val-hot">23/03 → 15/04/2026</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Pontuação mínima (orientador)</span>
+        <span class="val">50 pontos no Lattes (últimos 5 anos)</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Vigência da bolsa</span>
+        <span class="val">Set 2026 → Ago 2027</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Destinado a</span>
+        <span class="val">Cotistas / ações afirmativas</span>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <span class="icon">⚠️</span>
+      <p><strong>Atenção:</strong> as inscrições se encerram impreterivelmente às <strong>18h do dia 15 de abril de 2026</strong>. A aprovação não é garantida — o projeto passa por avaliação de mérito. Mas precisa ser inscrito para ter chance!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 4 — CALENDÁRIO
+═══════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="top-bar">
+    <span class="num">03</span>
+    <h2>Calendário do processo seletivo</h2>
+  </div>
+  <div class="body">
+    <div class="timeline-item">
+      <span class="tl-date">18 mar 2026</span>
+      <div class="tl-line"><div class="tl-dot tl-upcoming"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Divulgação dos editais</h4><p>Publicação no site da UFT e Boletim de Serviço Eletrônico.</p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">23 mar → 15 abr</span>
+      <div class="tl-line"><div class="tl-dot tl-now"></div><div class="tl-vline"></div></div>
+      <div class="tl-text">
+        <h4>Inscrições online <span class="tl-now-label">AGORA</span></h4>
+        <p>Exclusivamente via Plataforma Canindé. Encerra às 18h do dia 15/04.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">A partir 24 abr</span>
+      <div class="tl-line"><div class="tl-dot tl-future"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Homologação das inscrições</h4><p>Conferência de documentação e requisitos.</p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">27–28 abr</span>
+      <div class="tl-line"><div class="tl-dot tl-future"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Prazo para recursos</h4><p>Recurso exclusivamente via Plataforma Canindé.</p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">11 mai → 01 jun</span>
+      <div class="tl-line"><div class="tl-dot tl-future"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Análise pelo Comitê Interno</h4><p>Avaliação do mérito dos projetos e planos de trabalho.</p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">A partir 06 jul</span>
+      <div class="tl-line"><div class="tl-dot tl-future"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Resultado parcial</h4><p>Divulgação dos projetos aprovados.</p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">A partir 24 jul</span>
+      <div class="tl-line"><div class="tl-dot tl-future"></div><div class="tl-vline"></div></div>
+      <div class="tl-text"><h4>Resultado final</h4><p></p></div>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-date">01 set 2026</span>
+      <div class="tl-line"><div class="tl-dot tl-upcoming"></div></div>
+      <div class="tl-text"><h4>🚀 Início do ciclo PIBIC 2026–2027</h4><p>Começa a pesquisa!</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 5 — REQUISITOS DO ALUNO
+═══════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="top-bar">
+    <span class="num">04</span>
+    <h2>Quem pode participar?</h2>
+  </div>
+  <div class="body">
+    <div class="col col-left">
+      <div class="col-title">✅ Requisitos para participar</div>
+      <div class="req-item">
+        <div class="req-icon req-icon-yes">✓</div>
+        <p>Estar <strong>regularmente matriculado</strong> em curso de graduação na UFT.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-yes">✓</div>
+        <p>Ter <strong>coeficiente de rendimento ≥ 5</strong> no histórico escolar.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-yes">✓</div>
+        <p>Ter <strong>Currículo Lattes</strong> cadastrado e atualizado no CNPq.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-yes">✓</div>
+        <p>Disponibilidade de <strong>20 horas semanais</strong> para atividades de pesquisa.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-yes">✓</div>
+        <p>Não ter previsão de <strong>concluir o curso</strong> antes do fim da vigência da bolsa (ago/2027).</p>
+      </div>
+      <div class="highlight-box">
+        <strong>Para o PIBIC-AF:</strong> o estudante deve ter ingressado na UFT por alguma modalidade de ação afirmativa (cotas raciais, sociais, escola pública, etc.).
+      </div>
+    </div>
+    <div class="col col-right">
+      <div class="col-title">🚫 Impedimentos</div>
+      <div class="req-item">
+        <div class="req-icon req-icon-no">✗</div>
+        <p><strong>Vínculo empregatício</strong> durante a vigência da bolsa (PIBIC). Para o PIVIC, isso é permitido.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-no">✗</div>
+        <p>Ter <strong>outra bolsa</strong> (interna ou externa) ao mesmo tempo — exceto auxílio permanência.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-no">✗</div>
+        <p>Ser <strong>parente consanguíneo</strong> do orientador.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-no">✗</div>
+        <p>Estar nos <strong>2 últimos semestres</strong> (salvo se for renovação).</p>
+      </div>
+      <div class="req-item">
+        <div class="req-icon req-icon-no">✗</div>
+        <p>Não ter <strong>Lattes atualizado</strong> — sem isso, a proposta não é aceita.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 6 — PROJETO 1
+═══════════════════════════════════════ -->
+<div class="slide project-slide" id="s6">
+  <div class="top-bar">
+    <span class="num">05 · Projeto 1</span>
+    <h2>Reforma Tributária e Setor Cultural</h2>
+  </div>
+  <div class="body">
+    <div class="left">
+      <div class="proj-label">Tema de pesquisa</div>
+      <div class="proj-title">Impactos da EC 132/2023 sobre agentes culturais de Palmas (TO)</div>
+
+      <div class="proj-prob">
+        <div class="pb-label">🔍 Problema de pesquisa</div>
+        <p>Como as mudanças introduzidas pela EC 132/2023 afetam a carga tributária e a viabilidade financeira de organizações culturais, cooperativas e microempreendedores individuais do setor cultural de Palmas (TO)?</p>
+      </div>
+
+      <div class="proj-obj">
+        <strong style="color:rgba(255,255,255,.9)">Objetivo:</strong> Analisar os impactos da Reforma Tributária sobre a estrutura jurídico-tributária de agentes culturais de Palmas (TO), identificando oportunidades e vulnerabilidades para diferentes formas de organização do setor.
+      </div>
+
+      <div class="link-list">
+        <div class="link-item">Conexão direta com Direito Tributário (EC 132, regimes tributários, imunidades)</div>
+        <div class="link-item">Conexão com Direito Empresarial (formas societárias: MEI, cooperativa, associação)</div>
+        <div class="link-item">Campo empírico da ACE 2 — setor cultural palmense</div>
+        <div class="link-item">Tema atual e sem pesquisas locais ainda</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="side-chip">
+        <div class="sc-label">📚 Disciplinas integradas</div>
+        <p>Dir. Tributário · Dir. Empresarial · ACE 2 (Extensão)</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">🗂️ Método sugerido</div>
+        <p>Pesquisa jurídico-documental + entrevistas semi-estruturadas com agentes culturais de Palmas.</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">📦 Possíveis produtos</div>
+        <p>Artigo científico · Resumo em evento · Relatório técnico para agentes culturais · Cartilha (ACE).</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">⏱️ Horizonte</div>
+        <p>12 meses (set/2026 → ago/2027), com resultado parcial em mar/2027.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 7 — PROJETO 2
+═══════════════════════════════════════ -->
+<div class="slide project-slide" id="s7">
+  <div class="top-bar">
+    <span class="num">06 · Projeto 2</span>
+    <h2>Sistema Nacional de Cultura em Palmas</h2>
+  </div>
+  <div class="body">
+    <div class="left">
+      <div class="proj-label">Tema de pesquisa</div>
+      <div class="proj-title" style="color:#e0f2fe">Direitos culturais e municipalização das políticas de cultura à luz da Lei 14.835/2024</div>
+
+      <div class="proj-prob">
+        <div class="pb-label">🔍 Problema de pesquisa</div>
+        <p>O município de Palmas (TO) possui os instrumentos jurídicos e normativos exigidos pela Lei 14.835/2024 para adesão plena ao Sistema Nacional de Cultura — e em que medida lacunas institucionais comprometem os direitos culturais dos agentes locais?</p>
+      </div>
+
+      <div class="proj-obj">
+        <strong style="color:rgba(255,255,255,.9)">Objetivo:</strong> Analisar o grau de conformidade do município de Palmas (TO) com as exigências normativas do SNC, identificando lacunas jurídicas e formulando recomendações para o fortalecimento da política municipal de cultura.
+      </div>
+
+      <div class="link-list">
+        <div class="link-item">Conexão com Direito Empresarial (estrutura jurídica de OSCs, associações e cooperativas culturais)</div>
+        <div class="link-item">Análise de atos normativos municipais e legislação federal</div>
+        <div class="link-item">Campo empírico da ACE 2 — políticas culturais de Palmas</div>
+        <div class="link-item">Lei muito nova (2024) — espaço real de contribuição científica</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="side-chip">
+        <div class="sc-label">📚 Disciplinas integradas</div>
+        <p>Dir. Empresarial · ACE 2 (Extensão) · Direitos Humanos/Culturais</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">🗂️ Método sugerido</div>
+        <p>Pesquisa jurídico-documental + análise de legislação municipal + entrevistas com gestores culturais de Palmas.</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">📦 Possíveis produtos</div>
+        <p>Artigo científico · Mapeamento normativo · Recomendações para a Prefeitura · Relatório de pesquisa.</p>
+      </div>
+      <div class="side-chip">
+        <div class="sc-label">⏱️ Horizonte</div>
+        <p>12 meses (set/2026 → ago/2027), com resultado parcial em mar/2027.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 8 — GRUPO DE ESTUDOS
+═══════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="top-bar">
+    <span class="num">07</span>
+    <h2>Grupo de Estudos</h2>
+  </div>
+  <div class="body">
+    <div class="left">
+      <div class="lead">Pesquisa não precisa esperar a aprovação da bolsa.</div>
+      <p class="sub">Independentemente do resultado do PIBIC, podemos construir um grupo de estudos que funcione como laboratório de pesquisa — produzindo conhecimento, desenvolvendo habilidades e gerando publicações ao longo do semestre.</p>
+
+      <div style="font-size:.85rem; color:rgba(255,255,255,.55); font-family:'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin-bottom: 8px;">O que produziremos juntos</div>
+      <div class="output-list">
+        <div class="output-item">
+          <span class="oi-icon">📄</span>
+          <div class="oi-text">
+            <h4>Resumos para eventos</h4>
+            <p>Congressos de Direito, Contabilidade e Ciências Sociais — ótimo pra Lattes</p>
+          </div>
+        </div>
+        <div class="output-item">
+          <span class="oi-icon">📰</span>
+          <div class="oi-text">
+            <h4>Artigos científicos</h4>
+            <p>Em revistas qualificadas, com autoria dos estudantes participantes</p>
+          </div>
+        </div>
+        <div class="output-item">
+          <span class="oi-icon">📋</span>
+          <div class="oi-text">
+            <h4>Relatórios técnicos e cartilhas</h4>
+            <p>Para agentes culturais, OSCs e MEIs — impacto concreto na comunidade</p>
+          </div>
+        </div>
+        <div class="output-item">
+          <span class="oi-icon">🎤</span>
+          <div class="oi-text">
+            <h4>Seminário de IC da UFT (out/nov 2027)</h4>
+            <p>Apresentação oral dos resultados — obrigatória para bolsistas, aberta a todos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <h3>Como funcionará</h3>
+      <div class="meeting-card">
+        <p>Encontros quinzenais (online ou presencial) para leitura, discussão de textos, acompanhamento das pesquisas e orientação coletiva. A ideia é que os projetos do PIBIC sejam o núcleo, mas todos no grupo aprendem e contribuem.</p>
+      </div>
+      <div style="font-size:.8rem; color:rgba(255,255,255,.4); font-family:'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin-top:4px;">Quem pode participar</div>
+      <div class="who-list">
+        <div class="who-item"><div class="wi-dot"></div>Estudantes interessados nos temas (sem necessidade de bolsa)</div>
+        <div class="who-item"><div class="wi-dot"></div>Alunos do Dir. Tributário, Dir. Empresarial ou ACE 2</div>
+        <div class="who-item"><div class="wi-dot"></div>Quem já pesquisa ou quer começar a pesquisar</div>
+        <div class="who-item"><div class="wi-dot"></div>Participação como coautor em publicações</div>
+      </div>
+      <div class="meeting-card" style="background:rgba(167,139,250,.05); border-color:rgba(167,139,250,.15); margin-top:8px;">
+        <p style="font-size:.82rem;">O grupo também pode apoiar outros projetos de pesquisa nos temas das disciplinas — a lista não se limita aos dois projetos PIBIC.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 9 — PRÓXIMOS PASSOS
+═══════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="top-bar">
+    <span class="num">08</span>
+    <h2>O que fazer a partir de agora</h2>
+  </div>
+  <div class="body">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Manifeste seu interesse</h4>
+        <p>Se algum dos projetos chamou atenção — ou se você tem outro tema em mente —, fale com o professor. Pode ser por e-mail ou na conversa de hoje.</p>
+        <div class="deadline">→ Ainda hoje, se possível</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Atualize seu Currículo Lattes</h4>
+        <p>Acesse plataforma.cnpq.br e mantenha seu Lattes atualizado. Sem isso, a inscrição não é homologada.</p>
+        <div class="deadline">→ Esta semana</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Elaboramos o plano de trabalho juntos</h4>
+        <p>O plano de trabalho (máx. 5 páginas) é responsabilidade do aluno, com supervisão do orientador. Começamos assim que houver interesse confirmado.</p>
+        <div class="deadline">→ Até início de abril</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Submissão via Canindé</h4>
+        <p>O orientador cadastra o projeto e o aluno o plano de trabalho. Tudo online, via Plataforma Canindé.</p>
+        <div class="deadline">→ Até 15/04 às 18h (improrrogável)</div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <p>Se você tiver interesse no grupo de estudos — mesmo sem querer concorrer ao PIBIC agora —, <strong>também manifeste hoje</strong>. A pesquisa começa com curiosidade, não com aprovação.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 10 — PERGUNTAS
+═══════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="big">?</div>
+  <div class="inner">
+    <h2>Perguntas, dúvidas, ideias?</h2>
+    <p>Este é um convite aberto. Ninguém precisa ter certeza agora — estamos aqui para pensar juntos sobre o que pode ser feito.</p>
+    <div class="contact">
+      <div class="contact-item">
+        <div class="ci-label">E-mail</div>
+        <div class="ci-val">demetrio@uft.edu.br</div>
+      </div>
+      <div class="contact-item">
+        <div class="ci-label">Plataforma Canindé</div>
+        <div class="ci-val">sites.uft.edu.br/caninde</div>
+      </div>
+      <div class="contact-item">
+        <div class="ci-label">Inscrições encerram</div>
+        <div class="ci-val">15/04/2026 às 18h</div>
+      </div>
+    </div>
+  </div>
+  <div class="uft-badge">UFT · Ciências Contábeis · Campus Palmas · 2026</div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ── NAVEGAÇÃO ── -->
+<div class="nav">
+  <button onclick="go(-1)" title="Anterior (←)">←</button>
+  <div class="progress-dots" id="dots"></div>
+  <button onclick="go(1)" title="Próximo (→)">→</button>
+  <span class="counter" id="counter">1 / 10</span>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const counterEl = document.getElementById('counter');
+  let cur = 0;
+
+  // build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    dotsEl.children[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    dotsEl.children[cur].classList.add('active');
+    counterEl.textContent = `${cur + 1} / ${slides.length}`;
+  }
+
+  function go(d) { goTo(cur + d); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') go(-1);
+  });
+</script>
+
+</body>
+</html>
